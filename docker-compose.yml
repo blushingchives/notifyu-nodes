@@ -1,0 +1,55 @@
+# eval `ssh-agent -s` && ssh-add ~/keypair.pem
+# docker compose --profile node up -d --build --force-recreate
+# eval `ssh-agent -s` && ssh-add ~/keypair.pem && git pull && docker compose up -d --build --force-recreate
+
+name: docker-nodes
+services:
+  # ###################################################################
+  # Snapshot
+  # ###################################################################
+  snapshot:
+    build: ./snapshot
+    profiles: [snapshot]
+    volumes:
+      - ./shared-volume:/data
+  # snapshot:
+  #   image: alpine:latest
+  #   profiles: [snapshot]
+  #   volumes:
+  #     - ./snapshot:/root/config:ro
+  #     - ./shared-volume:/data
+  #   entrypoint: /root/config/entrypoint.sh
+  # ###################################################################
+  # Node Components
+  # ###################################################################
+  # proxy:
+  #   image: nginx:1.28
+  #   profiles: [node]
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./proxy:/etc/nginx:ro
+  #   command: [nginx-debug, "-g", "daemon off;"]
+  # load-balancer:
+  #   image: haproxy:2.8
+  #   profiles: [node]
+  #   restart: unless-stopped
+  #   user: root
+  #   ports:
+  #     - "11111:11111" # RPC Balancer
+  #     - "11112:11112" # API Balancer
+  #   volumes:
+  #     - ./load-balancer:/usr/local/config:ro
+  #   entrypoint: /usr/local/config/entrypoint.sh
+  thornode:
+    image: registry.gitlab.com/thorchain/thornode:mainnet
+    profiles: [node]
+    container_name: thornode
+    restart: unless-stopped
+    ports:
+      - "26657:26657" # Tendermint RPC
+      - "1317:1317" # REST API
+    volumes:
+      # - volume:/root/.thornode
+      - ./thornode:/root/config:ro
+      - ./shared-volume:/root/shared-volume:ro
+    entrypoint: /root/config/entrypoint.sh
