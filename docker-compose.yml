@@ -2,7 +2,7 @@
 # docker compose --profile node up -d --build --force-recreate
 # eval `ssh-agent -s` && ssh-add ~/keypair.pub && git pull && docker compose up -d --build --force-recreate
 
-name: docker-nodes
+name: notifyu-node
 services:
   # ###################################################################
   # Snapshot
@@ -27,7 +27,7 @@ services:
     profiles: [node]
     restart: unless-stopped
     ports:
-      - 80:80 # RPC Balancer
+      - 80:80
     volumes:
       - ./proxy:/etc/nginx:ro
     command: [nginx-debug, "-g", "daemon off;"]
@@ -47,7 +47,6 @@ services:
       context: ./thornode
       dockerfile: Dockerfile
     profiles: [node]
-    container_name: thornode
     restart: unless-stopped
     ports:
       - 26657:26657 # Tendermint RPC
