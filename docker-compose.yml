@@ -41,7 +41,8 @@ services:
       - 11112:11112 # API Balancer
     volumes:
       - ./load-balancer:/usr/local/config:ro
-    entrypoint: /usr/local/config/entrypoint.sh
+    entrypoint: /bin/sh
+    command: -c "chmod +x /usr/local/config/entrypoint.sh && /usr/local/config/entrypoint.sh"
   thornode:
     build:
       context: ./thornode
