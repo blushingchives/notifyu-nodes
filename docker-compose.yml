@@ -1,4 +1,4 @@
-# eval `ssh-agent -s` && ssh-add ~/nodekey.pub
+# eval `ssh-agent -s` && ssh-add ~/nodekey
 # docker compose --profile node up -d --build --force-recreate
 # eval `ssh-agent -s` && ssh-add ~/keypair.pub && git pull && docker compose up -d --build --force-recreate
 
@@ -55,7 +55,14 @@ services:
       - thornode-volume-1:/root/.thornode
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
-    entrypoint: /root/config/entrypoint.sh
+    entrypoint: /bin/sh
+    command: -c "chmod +x /root/config/entrypoint.sh && /root/config/entrypoint.sh"
+
+  # directory-monitor:
+  #   build: ./directory-monitor
+  #   volumes:
+  #     - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Allow container to run Docker commands
+  #     - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Allow container to run Docker commands
 
 volumes:
   thornode-volume-1:
