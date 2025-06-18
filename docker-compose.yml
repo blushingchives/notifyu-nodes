@@ -32,7 +32,9 @@ services:
       - ./proxy:/etc/nginx:ro
     command: [nginx-debug, "-g", "daemon off;"]
   load-balancer:
-    image: haproxy:2.8
+    build:
+      context: ./load-balancer
+      dockerfile: Dockerfile
     profiles: [node]
     restart: unless-stopped
     user: root
@@ -41,8 +43,6 @@ services:
       - 11112:11112 # API Balancer
     volumes:
       - ./load-balancer:/usr/local/config:ro
-    entrypoint: /bin/sh
-    command: -c "chmod +x /usr/local/config/entrypoint.sh && /usr/local/config/entrypoint.sh"
   thornode:
     build:
       context: ./thornode
@@ -56,8 +56,6 @@ services:
       - thornode-volume-1:/root/.thornode
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
-    entrypoint: /bin/sh
-    command: -c "chmod +x /root/config/entrypoint.sh && /root/config/entrypoint.sh"
 
   # directory-monitor:
   #   build: ./directory-monitor
