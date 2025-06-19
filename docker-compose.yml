@@ -49,9 +49,26 @@ services:
       dockerfile: Dockerfile
     profiles: [node]
     restart: unless-stopped
-    ports:
-      - 26657:26657 # Tendermint RPC
-      - 1317:1317 # REST API
+    volumes:
+      - thornode-volume-1:/root/.thornode
+      - ./thornode:/root/config:ro
+      - ./shared-volume:/root/shared-volume:ro
+  thornode:
+    build:
+      context: ./thornode
+      dockerfile: Dockerfile
+    profiles: [node]
+    restart: unless-stopped
+    volumes:
+      - thornode-volume-1:/root/.thornode
+      - ./thornode:/root/config:ro
+      - ./shared-volume:/root/shared-volume:ro
+  thornode:
+    build:
+      context: ./thornode
+      dockerfile: Dockerfile
+    profiles: [node]
+    restart: unless-stopped
     volumes:
       - thornode-volume-1:/root/.thornode
       - ./thornode:/root/config:ro
