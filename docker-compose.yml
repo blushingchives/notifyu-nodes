@@ -43,7 +43,8 @@ services:
       - 11112:11112 # API Balancer
     volumes:
       - ./load-balancer:/usr/local/config:ro
-  thornode:
+  thornode1:
+    container_name: notifyu-node-thornode-1
     build:
       context: ./thornode
       dockerfile: Dockerfile
@@ -53,24 +54,26 @@ services:
       - thornode-volume-1:/root/.thornode
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
-  thornode:
+  thornode2:
+    container_name: notifyu-node-thornode-2
     build:
       context: ./thornode
       dockerfile: Dockerfile
     profiles: [node]
     restart: unless-stopped
     volumes:
-      - thornode-volume-1:/root/.thornode
+      - thornode-volume-2:/root/.thornode
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
-  thornode:
+  thornode3:
+    container_name: notifyu-node-thornode-3
     build:
       context: ./thornode
       dockerfile: Dockerfile
     profiles: [node]
     restart: unless-stopped
     volumes:
-      - thornode-volume-1:/root/.thornode
+      - thornode-volume-3:/root/.thornode
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
 
@@ -82,3 +85,5 @@ services:
 
 volumes:
   thornode-volume-1:
+  thornode-volume-2:
+  thornode-volume-3:
