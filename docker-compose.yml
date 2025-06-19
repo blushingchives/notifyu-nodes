@@ -1,8 +1,8 @@
-# eval `ssh-agent -s` && ssh-add ~/keypair.pem
+# eval `ssh-agent -s` && ssh-add ~/nodekey
 # docker compose --profile node up -d --build --force-recreate
-# eval `ssh-agent -s` && ssh-add ~/keypair.pem && git pull && docker compose up -d --build --force-recreate
+# eval `ssh-agent -s` && ssh-add ~/keypair.pub && git pull && docker compose up -d --build --force-recreate
 
-name: docker-nodes
+name: notifyu-node
 services:
   # ###################################################################
   # Snapshot
@@ -22,34 +22,46 @@ services:
   # ###################################################################
   # Node Components
   # ###################################################################
-  # proxy:
-  #   image: nginx:1.28
-  #   profiles: [node]
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./proxy:/etc/nginx:ro
-  #   command: [nginx-debug, "-g", "daemon off;"]
-  # load-balancer:
-  #   image: haproxy:2.8
-  #   profiles: [node]
-  #   restart: unless-stopped
-  #   user: root
-  #   ports:
-  #     - "11111:11111" # RPC Balancer
-  #     - "11112:11112" # API Balancer
-  #   volumes:
-  #     - ./load-balancer:/usr/local/config:ro
-  #   entrypoint: /usr/local/config/entrypoint.sh
-  thornode:
-    image: registry.gitlab.com/thorchain/thornode:mainnet
+  proxy:
+    image: nginx:1.28
     profiles: [node]
-    container_name: thornode
     restart: unless-stopped
     ports:
-      - "26657:26657" # Tendermint RPC
-      - "1317:1317" # REST API
+      - 80:80
     volumes:
-      # - volume:/root/.thornode
+      - ./proxy:/etc/nginx:ro
+    command: [nginx-debug, "-g", "daemon off;"]
+  load-balancer:
+    build:
+      context: ./load-balancer
+      dockerfile: Dockerfile
+    profiles: [node]
+    restart: unless-stopped
+    user: root
+    ports:
+      - 11111:11111 # RPC Balancer
+      - 11112:11112 # API Balancer
+    volumes:
+      - ./load-balancer:/usr/local/config:ro
+  thornode:
+    build:
+      context: ./thornode
+      dockerfile: Dockerfile
+    profiles: [node]
+    restart: unless-stopped
+    ports:
+      - 26657:26657 # Tendermint RPC
+      - 1317:1317 # REST API
+    volumes:
+      - thornode-volume-1:/root/.thornode
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
-    entrypoint: /root/config/entrypoint.sh
+
+  # directory-monitor:
+  #   build: ./directory-monitor
+  #   volumes:
+  #     - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Allow container to run Docker commands
+  #     - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Allow container to run Docker commands
+
+volumes:
+  thornode-volume-1:

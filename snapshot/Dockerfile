@@ -6,6 +6,7 @@ WORKDIR /data
 
 # Download latest snapshot index and extract the latest .tar.lz4 file
 ENTRYPOINT sh -c '\
+  rm -rf /data && \
   FILENAME=$(curl -s "https://snapshots.ninerealms.com/snapshots?prefix=thornode" | grep -Eo "thornode/[0-9]+.tar.gz" | sort -n | tail -n 1 | cut -d "/" -f 2) && \
   aria2c --split=16 --max-concurrent-downloads=16 --max-connection-per-server=16 --continue --min-split-size=100M -d /data -o $FILENAME "https://snapshots.ninerealms.com/snapshots/thornode/${FILENAME}" && \
   echo "Extracting $FILENAME." && \
