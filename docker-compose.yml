@@ -13,6 +13,7 @@ services:
     user: root
     volumes:
       - ./shared-volume:/data
+      - ./snapshot:/snapshot:ro
   # snapshot:
   #   image: alpine:latest
   #   profiles: [snapshot]
