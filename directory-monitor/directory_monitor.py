@@ -15,8 +15,6 @@ CATCH_UP_INTERVAL = 10  # polling interval
 SIZE_LIMIT_GB = 150  # GB
 CHECK_INTERVAL = 300  # seconds
 COMPOSE_PROJECT_DIR = "../"  # Directory with docker-compose.yaml
-SNAPSHOT_PROFILE = "snapshot"
-NODE_PROFILE = "node"
 
 def get_container_port(container_name):
     return CONTAINER_RPC_PORTS[container_name]
@@ -66,7 +64,7 @@ def run_snapshot():
     """Run the snapshot container."""
     logging.info("📸 Running snapshot container...")
     subprocess.run([
-        "docker", "compose", "--profile snapshot", "--project-directory", COMPOSE_PROJECT_DIR, "up", "--build", "--force-recreate"
+        "docker", "compose", "--profile", "snapshot", "--project-directory", COMPOSE_PROJECT_DIR, "up", "--build", "--force-recreate"
     ], check=True)
     logging.info("✅ Snapshot complete.")
 
