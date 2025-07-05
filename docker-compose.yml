@@ -77,11 +77,11 @@ services:
       - ./thornode:/root/config:ro
       - ./shared-volume:/root/shared-volume:ro
 
-  # directory-monitor:
-  #   build: ./directory-monitor
-  #   volumes:
-  #     - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Allow container to run Docker commands
-  #     - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Allow container to run Docker commands
+  directory-monitor:
+    build: ./directory-monitor
+    volumes:
+      - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Allow container to run Docker commands
+      - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Allow container to run Docker commands
 
 volumes:
   thornode-volume-1:
