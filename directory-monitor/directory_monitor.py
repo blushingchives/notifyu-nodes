@@ -46,7 +46,7 @@ def get_volume_size_gb(volume_name):
         logging.error(f"[{volume_name}] Failed to get volume size: {e}")
         return 0
 
-def get_system_used_gb(mount_point: str = "/") -> float:
+def get_total_disk_usage_gb(mount_point: str = "/") -> float:
     """Return *used* space on the given filesystem in GiB."""
     total, used, free = shutil.disk_usage(mount_point)
     return used / (1024**3)
