@@ -2,6 +2,7 @@ import subprocess
 import time
 import logging
 import requests
+import shutil
 
 # --- Configuration ---
 CONTAINER_RPC_PORTS = {
@@ -11,10 +12,9 @@ CONTAINER_RPC_PORTS = {
 }
 CATCH_UP_TIMEOUT = 21600  # seconds (6hrs)
 CATCH_UP_INTERVAL = 10  # polling interval
-SIZE_LIMIT_GB = 200  # GB
-CHECK_INTERVAL = 60  # seconds
-COMPOSE_PROJECT_DIR = "."  # Directory with docker-compose.yaml
-SNAPSHOT_SERVICE = "snapshot"
+SIZE_LIMIT_GB = 150  # GB
+CHECK_INTERVAL = 300  # seconds
+COMPOSE_PROJECT_DIR = "../"  # Directory with docker-compose.yaml
 SNAPSHOT_PROFILE = "snapshot"
 NODE_PROFILE = "node"
 
@@ -31,21 +31,6 @@ def get_thornode_container_volume_map():
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 # --- Helpers ---
-def get_volume_size_gb(volume_name):
-    """Return size of Docker volume in GB by inspecting it via container."""
-    try:
-        result = subprocess.check_output([
-            "docker", "run", "--rm",
-            "-v", f"{volume_name}:/data",
-            "alpine",
-            "sh", "-c", "du -s /data | cut -f1"
-        ])
-        size_kb = int(result.decode().strip())
-        return size_kb / 1024 / 1024
-    except Exception as e:
-        logging.error(f"[{volume_name}] Failed to get volume size: {e}")
-        return 0
-
 def get_total_disk_usage_gb(mount_point: str = "/") -> float:
     """Return *used* space on the given filesystem in GiB."""
     total, used, free = shutil.disk_usage(mount_point)
@@ -81,9 +66,7 @@ def run_snapshot():
     """Run the snapshot container."""
     logging.info("📸 Running snapshot container...")
     subprocess.run([
-        "docker", "compose", "--profile", SNAPSHOT_PROFILE,
-        "--project-directory", COMPOSE_PROJECT_DIR,
-        "run", "--rm", SNAPSHOT_SERVICE
+        "docker compose --profile snapshot --project-directory", COMPOSE_PROJECT_DIR, "up --build --force-recreate"
     ], check=True)
     logging.info("✅ Snapshot complete.")
 
@@ -92,17 +75,15 @@ def restart_thornode(container_name, volume_name):
     logging.info(f"🔄 Restarting {container_name} with volume {volume_name}...")
 
     # Stop container
-    subprocess.run(["docker", "stop", container_name], check=True)
+    subprocess.run(["docker stop", container_name], check=True)
 
     # Remove the volume
     logging.info(f"🗑️ Removing volume: {volume_name}")
-    subprocess.run(["docker", "volume", "rm", "-f", volume_name], check=True)
+    subprocess.run(["docker volume rm -f", volume_name], check=True)
 
     # Recreate container
     subprocess.run([
-        "docker", "compose", "--profile", NODE_PROFILE,
-        "--project-directory", COMPOSE_PROJECT_DIR,
-        "up", "-d", "--no-deps", "--force-recreate", container_name
+        "docker compose --profile node --project-directory", COMPOSE_PROJECT_DIR, "up -d --build --force-recreate", container_name
     ], check=True)
 
     # Wait for the node to catch up
@@ -117,7 +98,7 @@ def monitor_volumes():
         if used_gb > SIZE_LIMIT_GB:
             logging.warning(f"🚨 Disk usage exceeded: {used_gb:.2f} GB > {SIZE_LIMIT_GB} GB")
 
-            # run_snapshot()
+            run_snapshot()
 
             # container_volume_map = get_thornode_container_volume_map()
             # for container, volume in container_volume_map.items():

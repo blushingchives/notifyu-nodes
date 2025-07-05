@@ -10,6 +10,7 @@ services:
   snapshot:
     build: ./snapshot
     profiles: [snapshot]
+    user: root
     volumes:
       - ./shared-volume:/data
   # snapshot:
