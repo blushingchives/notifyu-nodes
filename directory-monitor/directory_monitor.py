@@ -66,7 +66,7 @@ def run_snapshot():
     """Run the snapshot container."""
     logging.info("📸 Running snapshot container...")
     subprocess.run([
-        "docker compose --profile snapshot --project-directory", COMPOSE_PROJECT_DIR, "up --build --force-recreate"
+        "docker", "compose", "--profile snapshot", "--project-directory", COMPOSE_PROJECT_DIR, "up", "--build", "--force-recreate"
     ], check=True)
     logging.info("✅ Snapshot complete.")
 
@@ -75,15 +75,15 @@ def restart_thornode(container_name, volume_name):
     logging.info(f"🔄 Restarting {container_name} with volume {volume_name}...")
 
     # Stop container
-    subprocess.run(["docker stop", container_name], check=True)
+    subprocess.run(["docker", "stop", container_name], check=True)
 
     # Remove the volume
     logging.info(f"🗑️ Removing volume: {volume_name}")
-    subprocess.run(["docker volume rm -f", volume_name], check=True)
+    subprocess.run(["docker", "volume", "rm", "-f", volume_name], check=True)
 
     # Recreate container
     subprocess.run([
-        "docker compose --profile node --project-directory", COMPOSE_PROJECT_DIR, "up -d --build --force-recreate", container_name
+        "docker", "compose", "--profile", "node", "--project-directory", COMPOSE_PROJECT_DIR, "up", "-d" ,"--build", "--force-recreate", container_name
     ], check=True)
 
     # Wait for the node to catch up
