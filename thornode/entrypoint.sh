@@ -3,7 +3,7 @@
 set -e
 
 echo "✅ Setting up node..."
-exec thornode version
+thornode version
 # Initialize thornode if not already done
 if [ ! -f /root/.thornode/config/genesis.json ]; then
 
