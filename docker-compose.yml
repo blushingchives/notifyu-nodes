@@ -1,6 +1,6 @@
 # eval `ssh-agent -s` && ssh-add ~/nodekey
 # docker compose --profile node up -d --build --force-recreate
-# eval `ssh-agent -s` && ssh-add ~/keypair.pub && git pull && docker compose up -d --build --force-recreate
+# eval `ssh-agent -s` && ssh-add ~/nodekey && git pull && docker compose --profile node up -d --build --force-recreate
 
 name: notifyu-node
 services:
@@ -79,6 +79,8 @@ services:
 
   directory-monitor:
     build: ./directory-monitor
+    profiles: [node]
+    restart: unless-stopped
     volumes:
       - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Allow container to run Docker commands
       - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Allow container to run Docker commands
