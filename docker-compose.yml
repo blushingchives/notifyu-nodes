@@ -84,6 +84,8 @@ services:
     build: ./directory-monitor
     profiles: [node]
     restart: unless-stopped
+    env_file:
+      - ./.env
     volumes:
       - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Docker commands
       - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Give access of host Docker instances to container

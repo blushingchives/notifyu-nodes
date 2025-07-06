@@ -4,6 +4,10 @@ import logging
 import requests
 import shutil
 
+# Telegram Bot Credentials
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
 # --- Configuration ---
 CONTAINER_RPC_PORTS = {
     "thornode-1": 26657,
@@ -87,6 +91,12 @@ def restart_thornode(container_name, volume_name):
     # Wait for the node to catch up
     wait_for_thornode_catchup(container_name)
 
+def send_telegram_message(message):
+    """Send an alert to Telegram."""
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    data = {"chat_id": TELEGRAM_CHAT_ID, "text": message}
+    requests.post(url, data=data)
+
 # --- Main Monitor Loop ---
 def monitor_volumes():
     while True:
@@ -95,6 +105,8 @@ def monitor_volumes():
 
         if used_gb > SIZE_LIMIT_GB:
             logging.warning(f"🚨 Disk usage exceeded: {used_gb:.2f} GB > {SIZE_LIMIT_GB} GB")
+            message = f"🚨 Alert: Container {container.name} ({container.id[:12]}) is {status.upper()}!"
+            send_telegram_message(message)
 
             # run_snapshot()
 
