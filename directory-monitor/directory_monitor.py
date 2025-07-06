@@ -3,6 +3,7 @@ import time
 import logging
 import requests
 import shutil
+import os
 
 # Telegram Bot Credentials
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
