@@ -106,7 +106,7 @@ def monitor_volumes():
 
         if used_gb > SIZE_LIMIT_GB:
             logging.warning(f"🚨 Disk usage exceeded: {used_gb:.2f} GB > {SIZE_LIMIT_GB} GB")
-            message = f"🚨 Alert: Container {container.name} ({container.id[:12]}) is {status.upper()}!"
+            message = f"🚨 Disk usage exceeded: {used_gb:.2f} GB > {SIZE_LIMIT_GB} GB"
             send_telegram_message(message)
 
             # run_snapshot()
