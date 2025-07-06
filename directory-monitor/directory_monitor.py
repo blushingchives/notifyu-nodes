@@ -17,8 +17,8 @@ CONTAINER_RPC_PORTS = {
 }
 CATCH_UP_TIMEOUT = 21600  # seconds (6hrs)
 CATCH_UP_INTERVAL = 10  # polling interval
-SIZE_LIMIT_GB = 150  # GB
-CHECK_INTERVAL = 300  # seconds
+SIZE_LIMIT_GB = 800  # GB
+CHECK_INTERVAL = 86400  # seconds
 COMPOSE_PROJECT_DIR = "../"  # Directory with docker-compose.yaml
 
 def get_container_port(container_name):
