@@ -8,12 +8,13 @@ services:
   # Snapshot
   # ###################################################################
   snapshot:
-    build: ./snapshot
+    build:
+      context: ./snapshot
+      dockerfile: Dockerfile
     profiles: [snapshot]
     user: root
     volumes:
       - ./shared-volume:/data
-      - ./snapshot:/snapshot:ro
   # snapshot:
   #   image: alpine:latest
   #   profiles: [snapshot]
@@ -84,8 +85,9 @@ services:
     profiles: [node]
     restart: unless-stopped
     volumes:
-      - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Allow container to run Docker commands
-      - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Allow container to run Docker commands
+      - /usr/bin/docker:/usr/bin/docker # (LINUX ONLY) Docker commands
+      - /var/run/docker.sock:/var/run/docker.sock # (LINUX ONLY) Give access of host Docker instances to container
+      - /usr/libexec/docker/cli-plugins:/usr/libexec/docker/cli-plugins # (LINUX ONLY) Docker compose commands
 
 volumes:
   thornode-volume-1:

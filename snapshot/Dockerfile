@@ -2,8 +2,10 @@ FROM alpine:latest
 
 RUN apk add --no-cache aria2 tar curl pv coreutils
 
-WORKDIR /data
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
+WORKDIR /data
 # Download latest snapshot index and extract the latest .tar.lz4 file
 # ENTRYPOINT sh -c '\
 #   rm -rf /data/* && \
@@ -16,7 +18,7 @@ WORKDIR /data
 #   rm -rf /data/$FILENAME && \
 #   echo "Done. Snapshot process complete."'
 
-ENTRYPOINT ["/snapshot/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 # # Download latest snapshot index and extract the latest .tar.lz4 file
 # ENTRYPOINT sh -c '\
 #   FILENAME=$(curl -s "https://snapshots.ninerealms.com/snapshots?prefix=thornode" | grep -Eo "thornode/[0-9]+.tar.gz" | sort -n | tail -n 1 | cut -d "/" -f 2) && \
