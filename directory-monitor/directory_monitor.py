@@ -96,7 +96,7 @@ def monitor_volumes():
         if used_gb > SIZE_LIMIT_GB:
             logging.warning(f"🚨 Disk usage exceeded: {used_gb:.2f} GB > {SIZE_LIMIT_GB} GB")
 
-            run_snapshot()
+            # run_snapshot()
 
             # container_volume_map = get_thornode_container_volume_map()
             # for container, volume in container_volume_map.items():

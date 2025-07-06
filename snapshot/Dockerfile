@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk add --no-cache aria2 tar curl pv coreutils
+RUN apk add --no-cache aria2 tar curl pv coreutils bash
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
