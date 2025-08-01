@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/thorchain/thornode:mainnet-3.8
+FROM registry.gitlab.com/thorchain/thornode:mainnet-3.9
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends aria2 ca-certificates curl git golang jq make pv rsync apt-utils
