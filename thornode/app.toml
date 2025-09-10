@@ -237,7 +237,7 @@ max-txs = -1
 
 [wasm]
 # Smart query gas limit is the max gas to be used in a smart query contract call
-query_gas_limit = 100000000
+query_gas_limit = 1000000000000
 
 # in-memory cache for Wasm contracts. Set to 0 to disable.
 # The value is in MiB not bytes
