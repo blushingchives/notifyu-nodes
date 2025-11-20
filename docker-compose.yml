@@ -1,5 +1,5 @@
 # eval `ssh-agent -s` && ssh-add ~/nodekey
-# docker compose --profile node up -d --build --force-recreate
+# docker compose --profile snapshot up -d --build --force-recreate
 # eval `ssh-agent -s` && ssh-add ~/nodekey && git pull && docker compose --profile node up -d --build --force-recreate
 
 name: notifyu-node
